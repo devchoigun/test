@@ -1,0 +1,19 @@
+ENGINE = MYISAM, InnoDB, MEMORY   DEFAULT CHARSET=utf8;
+
+
+
+create table member(
+m_id varchar(40) not null primary key
+, m_name varchar(40)  not null
+, m_pass varchar(40) not null
+, m_email varchar(100) null
+, regdate varchar(14) not null
+, reguser varchar(40) not null
+, upddate varchar(14) null
+, upduser varchar(40) null
+) DEFAULT CHARSET=utf8;
+
+
+select DATE_FORMAT(sysdate(), '%Y%m%d%H%i%s')
+
+
