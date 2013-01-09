@@ -24,6 +24,7 @@ function sql_total($sql){
 
 function sql_query($sql){
 	global $connect;
+	echo "sql = $sql";
 	$result = @mysql_query($sql, $connect) or die("<p>$sql<p>" . mysql_errno() . " : " .  mysql_error() . "<p>error file : $_SERVER[PHP_SELF]");
 	return $result;
 }
