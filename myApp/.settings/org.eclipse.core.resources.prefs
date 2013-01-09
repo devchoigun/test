@@ -1,4 +1,4 @@
-#Wed Jan 02 17:17:25 KST 2013
+#Wed Jan 09 17:43:12 KST 2013
 eclipse.preferences.version=1
 encoding//admin/board/delete_ok.php=UTF-8
 encoding//admin/board/list.php=UTF-8
@@ -22,4 +22,14 @@ encoding//board/modify_ok.php=UTF-8
 encoding//board/view.php=UTF-8
 encoding//board/write.php=UTF-8
 encoding//board/write_ok.php=UTF-8
+encoding//common/include/common.php=UTF-8
 encoding//config/lib.php=UTF-8
+encoding//login/login.php=UTF-8
+encoding//login/login_chk.php=UTF-8
+encoding//login/logout.php=UTF-8
+encoding//member/join.php=UTF-8
+encoding//member/join_ok.php=UTF-8
+encoding//member/mem_info.php=UTF-8
+encoding//member/mem_info_ok.php=UTF-8
+encoding//tmp/sprintf.txt=UTF-8
+encoding//tmp/sql.txt=UTF-8

@@ -1,5 +1,5 @@
 <?
-	include "../../config/lib.php"
+	include "../../config/lib.php";
 	
 	//DB에 연결하는 부분입니다. 항상 반복되는 부분이니 꼭 암기!!!
 	$connect = sql_connect($db_host, $db_user, $db_pass, $db_name);
