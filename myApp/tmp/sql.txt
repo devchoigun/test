@@ -17,3 +17,19 @@ m_id varchar(40) not null primary key
 select DATE_FORMAT(sysdate(), '%Y%m%d%H%i%s')
 
 
+create table board(
+seq int unsigned auto_increment primary key
+, upper_no int unsigned not null
+, ref_sort int unsigned default 0 not null
+, ref_step int unsigned default 0 not null
+, b_name varchar(40) not null
+, b_pass varchar(40) not null
+, b_title varchar(255) not null
+, b_subject text not null
+, b_count int default 0 not null
+, b_ip varchar(15) not null
+, regdate varchar(14) not null
+, reguser varchar(40) not null
+, upddate varchar(14) null
+, upduser varchar(40) null
+) DEFAULT CHARSET=utf8;

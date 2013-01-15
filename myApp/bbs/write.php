@@ -17,7 +17,7 @@ function check_submit() {
 		alert('비밀번호를 입력해야 글을 수정하거나 삭제할 수 있습니다.');
 		document.myForm.password.focus();
 		return;
-	} else if (document.myForm.subject.value == "") {
+	} else if (document.myForm.title.value == "") {
 		alert('제목을 입력하세요');
 		document.myForm.subject.focus();
 		return;
@@ -51,12 +51,8 @@ function check_submit() {
 		<td><input type="password" name="password" size="20" maxlength="20"></td>
 	</tr>
 	<tr>
-		<th>email</th>
-		<td colspan="3"><input type="text" name="email" size="40" maxlength="200"></td>
-	</tr>
-	<tr>
 		<th>제목</th>
-		<td colspan="3"><input type="text" name="subject" size="87" maxlength="200"></td>
+		<td colspan="3"><input type="text" name="title" size="87" maxlength="200"></td>
 	</tr>
 	<tr>
 		<td colspan="4">

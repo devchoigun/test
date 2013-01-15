@@ -1,0 +1,37 @@
+/****************** Defaut CSS ********************/  
+  
+body	{  
+	font-family: 돋움, Dotum, 굴림, Gulim, Arial, sans-serif, Verdana, Helvetica, geneva;  
+	font-size: 0.75em; /* 12px */  
+	line-height:1.33; /* font-size:1(12px) + line-space:0.33(4px) = 16px */  
+	color:#666;  
+	margin:0px;  
+	padding:0px;  
+	}
+/* 상위 엘레멘트가 12px 를 1em으로 표현하고 있을때 하위 엘레멘트의 px값 em 변환 (소수점 2자리 반올림) 
+9px: 0.75em
+10px: 0.83em
+11px: 0.92em
+12px: 1em
+13px: 1.08em
+14px: 1.17em
+15px: 1.25em
+*/
+
+/* site common CSS */  
+A:link       {text-decoration:none; color:#666;}  
+A:visited    {text-decoration:none; color:#666;}  
+A:hover      {text-decoration:underline; color:#202020;}  
+A:active     {text-decoration:none; color:#666;}  
+  
+img            {border:none;}  
+li    img      {vertical-align:top;}  
+dl    img      {vertical-align:top;}  
+input          {vertical-align:middle;}/* input과 img가 섞일 우려가 있는 영역에는 p.class *    {vertical-align:middle;}    */  
+textarea       {}  
+select         {vertical-align:middle;}  
+  
+h1,h2,h3,h4,h5,h6,pre    {font-size:100%}  
+h1,h2,h3,h4,h5,h6,p,dl,dt,dd,ul,ol,li,form,fieldset,blockquote    {margin:0px;padding:0px}  
+dl,ul,ol    {list-style-type:none;}  
+hr    {display:none;}

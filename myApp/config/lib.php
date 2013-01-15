@@ -78,6 +78,41 @@ function check_level($this_level){
 	return $result;
 }
 
+/* getbasename function : 한글파일이 잘려서 나타나는 문제 (ex> 안녕.ppt --> .ppt) 모든 basename() 함수를 getbasename()으로 대체  */
+function getbasename($path) {
+	$pattern = (strncasecmp(PHP_OS, 'WIN', 3) ? '/([^\/]+)[\/]*$/' : '/([^\/\\\\]+)[\/\\\\]*$/');
+	if (preg_match($pattern, $path, $matches))
+		return $matches[1];
+	return '';
+}
+
+// 파일 업로드 시 중복파일의 경우 새로운 이름 부여
+function GetUniqFileName($fileName, $uploadPath){
+	$FileExt = strtolower(substr(strrchr($fileName, "."), 1));
+	$FileName = substr($fileName, 0, strlen($fileName) - strlen($FileExt) - 1);
+	$resultFileName = "$FileName.$FileExt";
+
+	while(file_exists($uploadPath.$resultFileName)){
+		$FileCnt++;
+		$resultFileName = $FileName."_".$FileCnt.".".$FileExt;
+	}
+	return($resultFileName);
+}
+
+// 파일 업로드 시 중복파일의 경우 새로운 이름 부여
+function GetUniqFileName2($tmp_file){
+	$tmp_file = explode(' ',microtime());			//공백을 구분하여 마이크로초와 초를 구분
+	$tmp_file[0] = substr($tmp_file[0],2,6);		//마이크로초의 소수점 뒷부분부터 6자리만 이용
+	$filename = $tmp_file[1].$tmp_file[0].'_'.$ext;		//$ext는 위에서 사용된 확장자 부분, $ext='jpg'
+	echo $filename;						//출력: 1304148776927509_jpg
+}
+
+// 파일 업로드 시 중복파일의 경우 새로운 이름 부여
+function isUploadFile($fileName, $valid_file_extensions){
+	$FileExt = strtolower(substr(strrchr($fileName, "."), 1));
+	return in_array($FileExt, $valid_file_extensions);
+}
+
 
 // 4. 페이징 사용자 함수
 function paging($page, $page_row, $page_scale, $total_count, $ext = ''){
@@ -85,11 +120,11 @@ function paging($page, $page_row, $page_scale, $total_count, $ext = ''){
     $total_page  = ceil($total_count / $page_row);
 
     // 4-2. 페이징을 출력할 변수 초기화
-    $paging_str = "";
+    $paging_str = "<ul class='pageNavi'>";
 
     // 4-3. 처음 페이지 링크 만들기
     if ($page > 1) {
-        $paging_str .= "<a href='".$_SERVER[PHP_SELF]."?page=1&'".$ext.">처음</a>";
+        $paging_str .= "<li><a href='".$_SERVER[PHP_SELF]."?page=1&'".$ext." class='edge'>처음</a></li>";
     }
 
     // 4-4. 페이징에 표시될 시작 페이지 구하기
@@ -101,7 +136,7 @@ function paging($page, $page_row, $page_scale, $total_count, $ext = ''){
 
     // 4-6. 이전 페이징 영역으로 가는 링크 만들기
     if ($start_page > 1){
-        $paging_str .= " &nbsp;<a href='".$_SERVER[PHP_SELF]."?page=".($start_page - 1)."&'".$ext.">이전</a>";
+        $paging_str .= "<li><a href='".$_SERVER[PHP_SELF]."?page=".($start_page - 1)."&'".$ext." class='edge'>이전</a></li>";
     }
 
     // 4-7. 페이지들 출력 부분 링크 만들기
@@ -109,23 +144,25 @@ function paging($page, $page_row, $page_scale, $total_count, $ext = ''){
         for ($i=$start_page;$i<=$end_page;$i++) {
             // 현재 페이지가 아니면 링크 걸기
             if ($page != $i){
-                $paging_str .= " &nbsp;<a href='".$_SERVER[PHP_SELF]."?page=".$i."&'".$ext."><span>$i</span></a>";
+                $paging_str .= "<li><a href='".$_SERVER[PHP_SELF]."?page=".$i."&'".$ext.">$i</a></li>";
             // 현재페이지면 굵게 표시하기
             }else{
-                $paging_str .= " &nbsp;<b>$i</b> ";
+                $paging_str .= "<li><a href='#' class='now'>$i</li>";
             }
         }
     }
 
     // 4-8. 다음 페이징 영역으로 가는 링크 만들기
     if ($total_page > $end_page){
-        $paging_str .= " &nbsp;<a href='".$_SERVER[PHP_SELF]."?page=".($end_page + 1)."&'".$ext.">다음</a>";
+        $paging_str .= "<li><a href='".$_SERVER[PHP_SELF]."?page=".($end_page + 1)."&'".$ext." class='edge'>다음</a></li>";
     }
 
     // 4-9. 마지막 페이지 링크 만들기
     if ($page < $total_page) {
-        $paging_str .= " &nbsp;<a href='".$_SERVER[PHP_SELF]."?page=".$total_page."&'".$ext.">맨끝</a>";
+        $paging_str .= "<li><a href='".$_SERVER[PHP_SELF]."?page=".$total_page."&'".$ext." class='edge'>맨끝</a></li>";
     }
+    
+    $paging_str .= "</ul>";
 
     return $paging_str;
 }
