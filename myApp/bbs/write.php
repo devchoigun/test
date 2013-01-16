@@ -1,7 +1,10 @@
+<?
+	$page = $_GET["page"];
+?>
 <html> 
 <head>
 <meta http-equiv=content-type content=text/html; charset=utf-8>
-<title>게시판</title>
+<title>bbs</title>
 <link href="/common/css/default.css" rel="stylesheet" type="text/css" />
 <link href="/common/css/basic_board.css" rel="stylesheet" type="text/css" />
 <link href="/common/css/button.css" rel="stylesheet" type="text/css" />
@@ -19,7 +22,7 @@ function check_submit() {
 		return;
 	} else if (document.myForm.title.value == "") {
 		alert('제목을 입력하세요');
-		document.myForm.subject.focus();
+		document.myForm.title.focus();
 		return;
 	} else if (document.myForm.ir1.value == "") {
 		alert('내용을 입력하세요');
@@ -35,6 +38,7 @@ function check_submit() {
 <body>
 <br /><br />
 <form name="myForm" method="post" enctype="multipart/form-data">
+<input type="hidden" name="page" value="<? echo $page ?>" />
 <table class="notice_write">
 	<cption></cption>
 	<colgroup>

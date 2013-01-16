@@ -10,9 +10,9 @@
 	
 	
 	if(get_magic_quotes_gpc()) {
-		$page = stripslashes($_GET['page']);
+		$page = stripslashes($_GET[page]);
 	}else{
-		$page = $_GET['page'];
+		$page = $_GET[page];
 	}
 	
 	
@@ -23,8 +23,7 @@
 	$page_num = 10; //한 화면에 보여줄 페이지 링크(묶음) 갯수
 	$offset = $list_num*($page-1); //한 페이지의 시작 글 번호(listnum 수만큼 나누었을 때 시작하는 글의 번호)
 	 
-	//전체 글 수를 구합니다. (쿼리문을 사용하여 결과를 배열로 저장하는 일반적 인 방법)
-	$query = sprintf("SELECT COUNT(seq) AS cnt FROM $tablename"); // SQL 쿼리문을 문자열 변수에 일단 저장하고
+	$query = sprintf("SELECT COUNT(seq) AS cnt FROM %s",$tablename);
 	$total_no = sql_total($query); //배열의 첫번째 요소의 값, 즉 테이블의 전체 글 수를 저장합니다.
 	 
 	//전체 페이지 수와 현재 글 번호를 구합니다.
@@ -35,17 +34,13 @@
 	//$paging_str = paging($page, $page_row, $page_scale, $total_count);
 	 
 	//bbs테이블에서 목록을 가져옵니다. (위의 쿼리문 사용예와 비슷합니다 .)
-	$query = sprintf("SELECT seq, b_name, b_title, b_count, %d FROM $tablename ORDER BY seq DESC LIMIT %d, %d",  "DATE_FORMAT(regdate, '%Y/%m/%d') as regdate", mysql_real_escape_string($offset,$connect), mysql_real_escape_string($list_num,$connect) ); // SQL 쿼리문
-	
-	echo $query;
-	
-	$result = mysql_query($query, $connect) or die (mysql_error()); // 쿼리문을 실행 결과
-	//쿼리 결과를 하나씩 불러와 실제 HTML에 나타내는 것은 HTML 문 중간에 삽입합니다.
+	$query = sprintf("SELECT seq, ref_step, b_name, b_title, b_count, DATE_FORMAT(regdate, '%%Y/%%m/%%d') as regdate FROM %s ORDER BY upper_no, ref_sort LIMIT %u, %u", $tablename, escape_data($offset), escape_data($list_num) );
+	$result = sql_query($query);
 ?>
 <html>
 <head>
 <meta http-equiv=content-type content=text/html; charset=utf-8>
-<title>news & notice</title>
+<title>bbs</title>
 <link href="/common/css/default.css" rel="stylesheet" type="text/css" />
 <link href="/common/css/basic_board.css" rel="stylesheet" type="text/css" />
 <link href="/common/css/button.css" rel="stylesheet" type="text/css" />
@@ -72,11 +67,19 @@
 	</thead>
 	<tbody>
 	<?
-	while ($array=mysql_fetch_array($result)) {
+	while ($array = mysql_fetch_array($result)) {
+		$inline = "";
+		while($array[ref_step]-- >0 ){
+			$inline.="&nbsp;&nbsp;&nbsp;";
+			if($array[ref_step]==0){
+				$inline.="└&nbsp;";
+			}
+		}
+		
 		echo "
 	<tr>
 		<td>$cur_num</td>
-		<td class='title'><a href='view.php?number=$array[seq]&page=$page'>$array[b_title]</a></td>
+		<td class='title'>$inline<a href='view.php?seq=$array[seq]&page=$page'>$array[b_title]</a></td>
 		<td>$array[b_name]</td>
 		<td>$array[regdate]</td>
 		<td>$array[b_count]</td>
@@ -93,7 +96,7 @@
 <table summary="board" class="notice_noline">
 	<tbody>
 	<tr>
-		<td class="right"><span class="button"><a href="write.php">글쓰기</a></span></td>
+		<td class="right"><span class="button"><a href="write.php?page=<? echo $page ?>">글쓰기</a></span></td>
 	</tr>
 	</tbody>
 </table>

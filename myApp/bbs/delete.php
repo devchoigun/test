@@ -1,6 +1,6 @@
 <?php 
-	$number = $_GET["number"];
-	$page = $_GET["$page"];
+	$seq = $_GET[seq];
+	$page = $_GET[$page];
 ?>
 <html>
 <head>
@@ -29,7 +29,7 @@ function check_submit() {
 <body bgcolor="white" text="black" link="blue" vlink="purple" alink="red">
 <form name="myForm" method="post">
 <input type="hidden" name="page" value="<? echo $page; ?>">
-<input type="hidden" name="number" value="<? echo $number; ?>">
+<input type="hidden" name="seq" value="<? echo $seq; ?>">
 <table align="center" border="1" cellspacing="0" width="200" bordercolordark="white" bordercolorlight="#CCCCCC">
 	<tr>
 		<td><p align="center">글 삭제 비밀번호</p></td>
