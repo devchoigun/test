@@ -27,8 +27,12 @@
 	<link href="/common/css/button.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="/common/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
 	<!-- //jquery -->
-	<script src="/admin/common/js/libs/jquery-1.5.1.min.js"></script>
-	<script>!window.jQuery && document.write(unescape('%3Cscript src="/admin/common/js/libs/jquery-1.5.1.min.js"%3E%3C/script%3E'))</script>
+<!-- 	<script src="/admin/common/js/libs/jquery-1.5.1.min.js"></script> -->
+	
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<!-- 	<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script> -->
+	<script type="text/javascript" src="/admin/common/js/jquery-ui-1.8.13.custom.min.js"></script>
 	<script language="javascript">
 	function check_submit() {
 		oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
@@ -53,6 +57,10 @@
 			document.myForm.submit();
 		}
 	}
+
+	$(function() {
+	    $( "#datepicker" ).datepicker();
+	  });
 	</script>
 </head>
 <body>
@@ -74,6 +82,10 @@
 						<tr>
 							<td align="right">제목</td>
 							<td colspan="3"><input type="text" name="title" size="87" maxlength="200"> </td>
+						</tr>
+						<tr>
+							<td align="right">date</td>
+							<td colspan="3"><input type="text" id="datepicker" size="20"> </td>
 						</tr>
 						<tr>
 							<td colspan="4"><textarea name="ir1" id="ir1" rows="10" cols="100" style="width:100%; height:412px; display:none;"></textarea></td>
