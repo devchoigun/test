@@ -31,7 +31,7 @@
 	$cur_num = $total_no - $list_num*($page-1); //현재 글번호
 	
 	// 4. 페이지 출력 내용 만들기
-	//$paging_str = paging($page, $page_row, $page_scale, $total_count);
+	$paging_str = paging($page, $list_num, $page_num, $total_no, $tablename);
 	 
 	//bbs테이블에서 목록을 가져옵니다. (위의 쿼리문 사용예와 비슷합니다 .)
 	$query = sprintf("SELECT seq, ref_step, b_name, b_title, b_count, DATE_FORMAT(regdate, '%%Y/%%m/%%d') as regdate FROM %s ORDER BY upper_no, ref_sort LIMIT %u, %u", $tablename, escape_data($offset), escape_data($list_num) );
@@ -90,7 +90,7 @@
 	</tbody>
 </table>
 <br/>
-<? echo paging($page, $list_num, $page_num, $total_no, $tablename) ?>
+<? echo $paging_str ?>
      
  
 <table summary="board" class="notice_noline">

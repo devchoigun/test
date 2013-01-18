@@ -21,9 +21,6 @@
 	 
 	//비밀번호가 맞는지 확인합니다.
 	$sql = "select number from $tablename where number=$number and password='$password'";
-	
-	echo "sql = $sql";
-	
 	$result = mysql_query($sql) or die (mysql_error());
  
 	if(mysql_num_rows($result)) {  //반환된 열이 있으면...

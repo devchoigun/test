@@ -1,138 +1,156 @@
-<?
-	include "../../config/lib.php";
-	
-	//DB에 연결하는 부분입니다. 항상 반복되는 부분이니 꼭 암기!!!
-	$connect = sql_connect($db_host, $db_user, $db_pass, $db_name);
-	 
-	//게시판 목록보기에 필요한 각종 변수 초기값을 설정합니다.
-	$tablename="bbs"; //테이블 이름
-	
-	if($page == '') $page = 1; //페이지 번호가 없으면 1
-	$list_num = 10; //한 페이지에 보여줄 목록 갯수
-	$page_num = 10; //한 화면에 보여줄 페이지 링크(묶음) 갯수
-	$offset = $list_num*($page-1); //한 페이지의 시작 글 번호(listnum 수만큼 나누었을 때 시작하는 글의 번호)
-	 
-	//전체 글 수를 구합니다. (쿼리문을 사용하여 결과를 배열로 저장하는 일반적 인 방법)
-	$query = sprintf("SELECT COUNT(number) AS cnt FROM $tablename"); // SQL 쿼리문을 문자열 변수에 일단 저장하고
-	$total_no = sql_total($query); //배열의 첫번째 요소의 값, 즉 테이블의 전체 글 수를 저장합니다.
-	 
-	//전체 페이지 수와 현재 글 번호를 구합니다.
-	$total_page=ceil($total_no/$list_num); // 전체글수를 페이지당글수로 나눈 값의 올림 값을 구합니다.
-	$cur_num=$total_no - $list_num*($page-1); //현재 글번호
-	 
-	//bbs테이블에서 목록을 가져옵니다. (위의 쿼리문 사용예와 비슷합니다 .)
-	$query="select * from $tablename order by number desc limit $offset, $list_num"; // SQL 쿼리문
-	$result=mysql_query($query) or die (mysql_error()); // 쿼리문을 실행 결과
-	//쿼리 결과를 하나씩 불러와 실제 HTML에 나타내는 것은 HTML 문 중간에 삽입합니다.
-?>
-<html>
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <head>
-<meta http-equiv=content-type content=text/html; charset=utf-8>
-<title>글목록보기</title>
-<STYLE TYPE=text/css>
-BODY,TD,SELECT,input,DIV,form,TEXTAREA,center,option,pre,blockquote {font-family:굴림;font-size:9pt;color:#555555;}
-A:link    {color:black;text-decoration:none;}
-A:visited {color:black;text-decoration:none;}
-A:active  {color:black;text-decoration:none;}
-A:hover  {color:gray;text-decoration:none;}
-</STYLE>
-</head>
-<script language="javascript">
-	function fn_del(param) {
-		var frm = document.form;
-		frm.number.value = param;
-		if(confirm("삭제하시겠습니까")){
-			frm.action = "delete_ok.php";
-			frm.submit();
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<title>Admin</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+	<link rel="stylesheet" href="/admin/common/css/style.css?v=2">
+	
+	<!-- fluid 960 -->
+	<link rel="stylesheet" type="text/css" href="/admin/common/css/text.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="/admin/common/css/layout.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="/admin/common/css/grid.css" media="screen" />
+	<!-- superfish menu -->
+	<link rel="stylesheet" type="text/css" href="/admin/common/css/superfish.css" media="screen" />
+	<!-- dataTable css -->
+	<link rel="stylesheet" href="/admin/common/css/demo_table_jui.css">
+
+	<!-- //jqueryUI css -->
+	<link type="text/css" href="/admin/common/css/custom-theme/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
+	<!-- //jquery -->
+	<script src="/admin/common/js/libs/jquery-1.5.1.min.js"></script>
+	<script>!window.jQuery && document.write(unescape('%3Cscript src="/admin/common/js/libs/jquery-1.5.1.min.js"%3E%3C/script%3E'))</script>
+	<!-- //jqueryUI -->
+	<script type="text/javascript" src="/admin/common/js/jquery-ui-1.8.13.custom.min.js"></script>
+	<!-- dataTable -->
+	<script src="/admin/common/js/jquery.dataTables.min.js"></script>
+	
+	<script language="javascript">
+		function fn_del(param) {
+			if(confirm("삭제하시겠습니까?")){
+				$.ajax({
+					type: "POST",
+					url: "delete_ok.php",
+					dataType: "json",
+					data: "seq="+param,
+					success: function(msg){
+						alert("삭제완료");
+						//oTable.fnDeleteRow(aPos[0]);
+						//$("#TableId").dataTable().fnDraw();
+					}
+					,error: function (xhr, ajaxOptions, thrownError) {
+					        alert(xhr.status);
+					        alert(thrownError);
+					} 
+				});
+			}
 		}
-	}
-</script>
+	
+		$(document).ready(function() {
+			// dataTable
+			var oTable = $('#gridTable').dataTable( {
+				"bProcessing": true
+				, "bPaginate": true //페이징 기능 사용 여부
+				, "sPaginationType": "full_numbers"
+				, "bLengthChange" : true //페이지 갯수 보이기 안보이기
+				, "bFilter": false	//상단 검색기능 false : 사용안함, true : 사용, default : true
+				, "bAutoWidth": false // false : 자동 조절, true : 고정 , default : true
+				//, "bInfo": false // [하단 현재페이지, 총 카운트 등 정보] false : 안씀, true : 씀 , default : true
+				, "bSort": true
+				, "bJQueryUI": true
+				, "bServerSide": true
+				, "sAjaxSource": "ajax.php"
+            			, "aoColumnDefs": [
+            			                   { "sTitle": "seq", "sName": "seq", "asSorting": [ "desc" ], "sWidth": "40px", "aTargets": [ 0 ]},
+            			                   { "sTitle": "title", "sName": "title", "aTargets": [ 1 ] , "sDefaultContent": "Edit" ,"bSortable": false},
+            			                   { "sTitle": "name", "sName": "name", "sWidth": "100px", "aTargets": [ 2 ]  ,"bSortable": false},
+            			                   { "sTitle": "hit", "sName": "count",  "sWidth": "40px", "aTargets": [ 3 ]  ,"bSortable": false},
+            			                   { "sTitle": "regdate", "sName": "regdate",  "sWidth": "80px", "aTargets": [ 4 ]  ,"bSortable": false, "sClass": "center"}, //, "sType ":"date" , string, numeric , default html
+            			                   { "sTitle": "delete", "sName": "delete",  "sWidth": "60px", "aTargets": [ 5 ]  ,"bSortable": false, "sClass": "center"}
+            			                 ]
+            			, "iDisplayLength": 10 //초기 페이지 갯수 설정
+            			//, "iDisplayStart": 10
+            			//, "fnInfoCallback": function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+            			    //return iStart +" to "+ iEnd;
+            			//  }
+			  	, "oLanguage": {
+				        "sEmptyTable": "No data available in table"
+				       , "sLoadingRecords": "Please wait - loading..."
+				       , "sZeroRecords": "No records to display" 
+				    }
+			    /*
+			  	, "oTableTools": {
+		                	"sRowSelect": "multi",
+		                	"aButtons": [
+		                    		{"sExtends": "ajax", "sButtonText":"Delete", "sAjaxUrl": "/dataTable/deleteMDR"}
+		                		]
+		            	}
+        			*/
+			} );
+/*
+			$('#gridTable tbody tr').live('click', function () {
+				var aTrs = oTable.fnGetNodes();
+				alert(aTrs.length);
+				//var aPos = oTable.fnGetPosition(this.parentNode);
+				//var aData = oTable.fnGetData(aPos[0]);
+				//alert(aData[1]);
+				oTable.fnDeleteRow(1, null, true);
+			} );
+			*/
+
+		});
+
+		
+	</script>
+</head>
 <body>
-<table border=1 cellspacing=0 width=680 bordercolordark=white bordercolorlight=#999999>
-	<form name="form" method="post">
-	<input type="hidden" name="number" value="" />
-	<tr>
-		<td width=30 bgcolor=#CCCCCC><p align=center>no</p></td>
-		<td bgcolor=#CCCCCC width=490><p align=center>subject</p></td>
-		<td width=60 bgcolor=#CCCCCC><p align=center>name</p></td>
-		<td width=70 bgcolor=#CCCCCC><p align=center>date</p></td>
-		<td width=30 bgcolor=#CCCCCC><p align=center>hit</p></td>
-		<td width=30 bgcolor=#CCCCCC><p align=center>delete</p></td>
-	</tr>
-	<?
-	while ($array=mysql_fetch_array($result)) {
-        	$date=date("Y/m/d", $array[writetime]); //글쓴시각을 Y/m/d 형식에 맞게 문자열로 바꿉니다 .
-		echo "
-	<tr>
-		<td width=30><p align=center>$cur_num</p></td>
-		<td width=490><p><a href='view.php?number=$array[number]&page=$page'>$array[subject]</a></p></td>
-		<td width=60><p align=center>$array[name]</p></td>
-		<td width=70><p align=center>$date</p>	</td>
-		<td width=30><p align=center>$array[count]</p></td>
-		<td width=30><p align=center><input type='button' value='삭제' onclick='fn_del($array[number])' ></p></td>
-	</tr> ";
-		$cur_num --;
-	}
-	?>
-	<tr>
-		<td width=100% colspan=6>
-		<?
-			//여기서부터 각종 페이지 링크
-			//먼저, 한 화면에 보이는 블록($page_num 기본값 이상일 때 블록으로 나뉘어짐 )
-			$total_block=ceil($total_page/$page_num);
-			$block=ceil($page/$page_num); //현재 블록
-			 
-			$first=($block-1)*$page_num; // 페이지 블록이 시작하는 첫 페이지
-			$last=$block*$page_num; //페이지 블록의 끝 페이지
-			 
-			if($block >= $total_block) {
-			        $last=$total_page;
-			}
-		 
-			echo "&nbsp;<p align=center>";
-			//[처음][*개앞]
-			if($block > 1) {
-			        $prev=$first-1;
-			        echo "<a href='list.php?page=1'>[처음 ]</a>&nbsp; ";
-			        echo "<a href='list.php?page=$prev'>[$page_num 개 앞]</a>";
-			}
-			 
-			//[이전]
-			if($page > 1) {
-			        $go_page=$page-1;
-			        echo "  <a href='list.php?page=$go_page'>[이전 ]</a>&nbsp;";
-			}
-			 
-			//페이지 링크
-			for ($page_link=$first+1;$page_link<=$last;$page_link++) {
-			        if($page_link==$page) {
-			                echo "<font color=green><b>$page_link</b></font>";
-			        }
-			        else {
-			                echo "<a href='list.php?page=$page_link'>[$page_link]</a>";
-			        }
-			}
-			 
-			//[다음]
-			if($total_page > $page) {
-			        $go_page=$page+1;
-			        echo "&nbsp;<a href='list.php?page=$go_page'>[다음]</a>";
-			}
-			 
-			//[*개뒤][마지막]
-			if($block < $total_block) {
-			        $next=$last+1;
-			        echo "<a href='list.php?page=$netxt'>[$page_num 개 뒤]</a>&nbsp;";
-			        echo "<a href='list.php?page=$total_page'>[마지막]</a></p>";
-			}
-		 
-		?>
-		</td>
-	</tr>
-	<tr>
-		<td width=100% colspan=6><p align=center><a href='write.php'>[글쓰기]</a></p>	</td>
-	</tr>
-	</form>
-</table>
+<div class="container_16">
+	<? include "../common/include/menu.php"; ?>
+	<div id="main" role="main">
+		<div id="content">
+			<div class="grid_16">
+				<div class="box">
+					<div class="block" id="list">
+					<table cellpadding="0" cellspacing="0" border="0" class="display" id="gridTable">
+					    <tbody>
+					      <tr>
+					        <td>loading...</td>
+					      </tr>
+					    </tbody>
+					</table>
+					<table summary="board">
+						<tbody>
+						<tr>
+							<td class="right"><span class="button"><a href="write.php">등록</a></span></td>
+						</tr>
+						</tbody>
+					</table>
+					</div>
+				</div>				
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>	
+	<footer>
+		<div class="grid_16" id="site_info">
+			<div class="box">
+				<p>footer</p>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</footer>
+</div>
 </body>
 </html>

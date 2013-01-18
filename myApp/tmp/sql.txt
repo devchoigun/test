@@ -33,3 +33,14 @@ seq int unsigned auto_increment primary key
 , upddate varchar(14) null
 , upduser varchar(40) null
 ) DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE bbs CHANGE number seq INT UNSIGNED AUTO_INCREMENT;
+
+ALTER TABLE bbs CHANGE SUBJECT title VARCHAR(100) NOT NULL;
+
+ALTER TABLE bbs CHANGE memo SUBJECT MEDIUMTEXT NOT NULL;
+
+ALTER TABLE bbs CHANGE writetime regdate VARCHAR(14) NOT NULL;
+
+UPDATE bbs SET regdate = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')

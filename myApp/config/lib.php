@@ -24,7 +24,7 @@ function sql_total($sql){
 
 function sql_query($sql){
 	global $connect;
-	echo "sql = $sql";
+// 	echo "sql = $sql";
 	$result = @mysql_query($sql, $connect) or die("<p>$sql<p>" . mysql_errno() . " : " .  mysql_error() . "<p>error file : $_SERVER[PHP_SELF]");
 	return $result;
 }
@@ -46,6 +46,16 @@ function sql_list($sql){
 
 	return $sql_list;
 }
+
+function escape_data($data){ // START function
+	global $connect; // connection
+	if (get_magic_quotes_gpc()){
+		$data = stripslashes($data);
+	}
+	return mysql_real_escape_string ($data, $connect);
+} // END function
+
+
 
 
 // 경고창 띄우고 이동시키는 함수
